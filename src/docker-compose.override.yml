@@ -27,6 +27,15 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data/ 
 
+  orderdb:
+    container_name: orderdb
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=P@ssword1
+    ports:
+      - "1433:1433"
+ 
   catalog.api:
     container_name: catalog.api
     environment:
@@ -69,6 +78,16 @@ services:
     ports:
       - "8003:80"
 
+  ordering.api:
+    container_name: ordering.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - "ConnectionStrings:OrderDb=Server=orderdb;Database=OrderDb;User Id=sa;Password=P@ssword1;"
+    depends_on:
+      - orderdb
+    ports:
+      - "8004:80"
+
   portainer:
     container_name: portainer
     restart: always
@@ -79,5 +98,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainer_data:/data
       
+  
+
+
   
 
